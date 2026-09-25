@@ -14,11 +14,18 @@
 - Demo has noindex/nofollow and an empty sitemap.
 - AI source images visually inspected before integration.
 
-## Not verified
+## Live pilot — 2026-09-25
 
-- Interactive desktop/mobile browser inspection: this environment's browser blocked localhost (`ERR_BLOCKED_BY_CLIENT`). Responsive styles are implemented, but visual browser QA and client interactions need checking after local launch.
-- Real Netlify deployment, form recording and delivery of email notifications.
-- Production domain, HTTPS and production indexing configuration.
-- GitHub repository creation or upload.
+- Source pushed to `git@github.com:List-In-Hive/flowers_test.git`, branch `main`.
+- Netlify deployment available at https://flowerslih.netlify.app/ over HTTPS.
+- Live browser checks: home, catalogue, Romance filter, arrangement size and price changes, selected arrangement/size carried into the enquiry form, blog index and article page.
+- Netlify detected the `flower-enquiry` form after form detection was enabled and the site redeployed.
+- The owner confirmed a successful test enquiry and receipt of the email notification.
 
-The project is delivered as source files, with no public deployment. No folder was created on the user's Mac: that filesystem is not connected. Extract the archive on Desktop to create `~/Desktop/flowers`.
+## Remaining checks
+
+- Full desktop/mobile visual and accessibility review. Initial live inspection used a narrow browser viewport.
+- Custom client domain and production indexing configuration. The current site is a demo.
+- Publication of a new article through the agency admin and verification of the resulting deployment.
+
+Local project: `/Users/admin/Desktop/IC/flowers`. The public site remains independent of the planned agency admin.

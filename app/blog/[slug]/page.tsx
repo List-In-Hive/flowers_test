@@ -5,6 +5,7 @@ import { notFound } from "next/navigation";
 import { getArticles, dateLabel } from "@/lib/blog";
 import { metadata, absolute } from "@/lib/seo";
 import { BlogCard } from "@/components/Cards";
+import { publicationHash } from "@/lib/publication";
 export const dynamicParams = false;
 export function generateStaticParams() {
   return getArticles().map((a) => ({ slug: a.slug }));
@@ -43,7 +44,7 @@ export default async function Article({
       <Link className="back-link" href="/blog">
         ← The journal
       </Link>
-      <article>
+      <article data-publication-hash={publicationHash(article)}>
         <header className="article-header">
           <p className="eyebrow">
             {dateLabel(article.publishedAt)} · {article.readingTime} min read
