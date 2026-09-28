@@ -84,7 +84,7 @@ Markdown не исполняет JSX, raw HTML пропускается (`skipHt
 
 | Переменная | Значение |
 | --- | --- |
-| `SITE_URL` | Реальный production origin, например `https://your-client-domain.com`, без пути; пусто в демо |
+| `SITE_URL` | Optional fallback outside Netlify: production origin without a path. Netlify automatically supplies its primary domain through `URL`. |
 | `ALLOW_INDEXING` | `false` по умолчанию; `true` только для настоящего production |
 | `NEXT_PUBLIC_FORMS_ENABLED` | `false` по умолчанию; `true` только после настройки Netlify Forms |
 
