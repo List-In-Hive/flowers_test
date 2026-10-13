@@ -1,65 +1,52 @@
-# Petal & Stem — flowers
+# Petal & Stem — Flowers
 
-Первый демонстрационный клиентский сайт для Inspirovate Creatives. Next.js App Router, TypeScript, Tailwind CSS, Markdown-блог и форма Netlify. Тексты интерфейса на английском. Это самостоятельный проект, который можно передать клиенту.
+A standalone demonstration flower website built with Next.js App Router, TypeScript, Markdown articles and Netlify Forms. Website copy and documentation are in English. The public site does not require the Inspirovate admin, database or OpenAI credentials to build or run.
 
-## Запуск на Mac
+Repository: [List-In-Hive/flowers_test](https://github.com/List-In-Hive/flowers_test). Demo website: [flowerslih.netlify.app](https://flowerslih.netlify.app/).
 
-Установите Node.js 22 LTS (22.14+) или 24 LTS. Распакуйте архив так, чтобы папка проекта находилась по пути `~/Desktop/flowers`.
+## Local development
+
+Use Node.js 24 (or a compatible version satisfying package.json), then run from this repository:
 
 ```bash
-cd ~/Desktop/flowers
 npm ci
 cp .env.example .env.local
 npm run dev
 ```
 
-Откройте http://localhost:3000. Если порт занят, Next.js покажет другой адрес в терминале.
+Open the address printed by Next.js, normally http://localhost:3000. For a production preview, run `npm run build`, then `npm start`. Stop any existing server on the same port first.
 
 ```bash
 npm run lint
 npm run typecheck
 npm test
 npm run build
-npm start
 ```
 
-`npm start` запускает последнюю production-сборку. Для разработки используйте `npm run dev`.
+## Pages and editing
 
-## Что реализовано
+- `/`: featured arrangements, studio approach, occasions and articles.
+- `/flowers` and `/flowers/[slug]`: catalogue, category filters and arrangement details.
+- `/contact`: enquiry with arrangement/size prefill and event or delivery details.
+- `/about`: studio introduction.
+- `/blog` and `/blog/[slug]`: published Markdown articles with covers and supporting images.
 
-- Главная с коллекцией, подходом студии, поводами и статьями.
-- `/flowers`: 6 композиций и фильтры по категории.
-- `/flowers/[slug]`: описание, выбор размера и цены, связанные композиции.
-- `/contact`: заявка с выбранной композицией и размером, поля события и доставки.
-- `/about`: подход к дизайну цветов.
-- `/blog` и `/blog/[slug]`: 3 опубликованные статьи; пример черновика скрыт.
-- SEO metadata, canonical при настроенном домене, robots и sitemap, Article JSON-LD.
-- По умолчанию индексация и отправка форм выключены.
+Business identity and navigation live in `config/site.ts`; catalogue data in `config/catalog.ts`; styling in `app/globals.css`; local WebP files in `public/images`. Hidden/blank contact details should only be replaced with verified public details. The form logic is in `components/ContactForm.tsx` and the matching Netlify definition in `public/__forms.html`.
 
-Корзина, оплата, личные кабинеты, админка агентства, AI-генерация и планировщик не входят в этот проект.
+Petal & Stem is fictional. Prices are examples and AI images are not photographs of real stock. Replace demo claims, prices and assets before a real commercial launch. See [ASSETS.md](ASSETS.md) for image provenance. There is no cart, payment processing, customer account or built-in AI generator.
 
-## Настройки и дизайн
+## Article format and publication
 
-- `config/site.ts`: название, описание, язык, контакты, навигация и соцсети. Контакты по умолчанию пустые и скрыты.
-- `config/catalog.ts`: каталог, фотографии, категории и цены по размерам в USD. Все цены демонстрационные.
-- `app/globals.css`: цвета, шрифты, интервалы, компоненты и адаптивные стили. Используются локальные системные шрифты без загрузки с Google Fonts.
-- `components/ContactForm.tsx`: общая логика формы; описание для Netlify в `public/__forms.html`.
-- `public/images/`: локальные WebP-изображения.
-
-Petal & Stem — вымышленная студия. Изображения сгенерированы AI и не являются фотографиями реальных товаров. Перед коммерческим запуском замените демонстрационные тексты, цены и изображения, настройте реальные контакты. Подробности происхождения изображений — `ASSETS.md`.
-
-## Статьи и контракт публикации
-
-Создайте `content/blog/my-article.md`:
+Add `content/blog/a-thoughtful-floral-story.md`:
 
 ```markdown
 ---
 title: "A thoughtful floral story"
-slug: a-thoughtful-floral-story
+slug: "a-thoughtful-floral-story"
 description: "A concise description of the article."
-publishedAt: "2026-09-25T09:00:00Z"
-status: published
-coverImage: /images/arrangement-1.webp
+publishedAt: "2026-01-15T09:00:00Z"
+status: "published"
+coverImage: "/images/arrangement-1.webp"
 coverAlt: "A blush rose bouquet"
 ---
 
@@ -70,68 +57,38 @@ Article text in **Markdown**.
 More text and an [internal link](/flowers).
 ```
 
-Обязательны все поля. `publishedAt` указывайте в кавычках, в ISO-формате с часовым поясом. `slug` содержит строчные латинские буквы, цифры и одиночные дефисы. Повторы slug, пустой текст, неверные поля и отсутствующие локальные обложки останавливают сборку с понятной ошибкой.
+Use an existing WebP path. Keep dates quoted, with a timezone offset, and slugs descriptive with lowercase letters, numbers and hyphens. Duplicate slugs, invalid metadata, empty bodies and missing local covers fail validation. An optional `publicationId` can be supplied by the publisher.
 
-`draft` и будущие публикации не попадают в список, sitemap, metadata и публичные маршруты. Дата сама не запускает деплой: внешний обработчик должен инициировать сборку в нужный момент. Проверка даты выполняется при сборке, время сравнивается по абсолютному timestamp.
+Only published, nonfuture articles appear on routes, lists and sitemap. Future dates alone do not trigger a build. The external worker pushes the article when due; Netlify then rebuilds. Raw HTML is skipped when rendering Markdown. The cover appears once on the article; supporting photos use normal Markdown image syntax and must exist under `public/images`.
 
-Для редактирования меняйте Markdown, для удаления удалите файл и сделайте новый деплой. Если меняете slug опубликованной статьи, настройте перенаправление в Next.js. Не меняйте React-компоненты для добавления статьи.
+`lib/publication.ts` computes the same hash as the admin. The article route includes `data-publication-hash`; `scripts/publication-manifest.ts` runs through `prebuild` to create `public/publication-manifest.json` from Netlify's deployment identifiers and the public article hashes. The generated manifest is not committed. Preserve this contract when redesigning the website.
 
-Для локальной админки Inspirovate сборка автоматически создаёт `public/publication-manifest.json`: публичные идентификаторы коммита/деплоя и отпечатки только доступных читателю статей. Страница статьи содержит тот же отпечаток в `data-publication-hash`. Это позволяет подтвердить публикацию конкретной версии после деплоя. Manifest генерируется через `prebuild` и не хранится в Git; сборка и работа сайта не требуют запущенной админки.
+Published articles can be edited through Git. Changing a published slug requires a redirect. New articles do not require editing React components. The admin currently verifies the exact publication commit, so a later unrelated deploy can prevent verification of an earlier pending publication.
 
-Markdown не исполняет JSX, raw HTML пропускается (`skipHtml`), опасные URL обрабатываются безопасным стандартным преобразованием react-markdown. Статьи должны проходить редакционную проверку до commit. Ссылки HTTPS на внешние изображения поддерживаются без проксирования через Next Image (unoptimized); для независимой передачи сайта предпочтительны локальные WebP.
+## Netlify deployment and enquiry form
 
-## Переменные окружения
+1. Import this repository into Netlify using the production branch. Leave Base directory empty, use `npm run build` and publish `.next`. Keep the automatic Next.js adapter; do not force a static export.
+2. Use the committed `.nvmrc` to select Node without manually entering NODE_VERSION.
+3. Netlify's built-in `URL` supplies the primary site origin. No manual SITE_URL is needed there. Outside Netlify, SITE_URL is an optional override. Rebuild after a primary-domain change.
+4. Enable **Forms → Form detection**, then deploy again. Confirm `flower-enquiry` appears with the expected fields.
+5. Configure the receiving email through Netlify form submission notifications.
+6. Set this template's `NEXT_PUBLIC_FORMS_ENABLED=true` for the intended deployment and rebuild. It defaults to false and is embedded at build time.
+7. Submit a clearly marked test enquiry on the deployed site. Check the Netlify record and actual email, including arrangement, size, date and message.
 
-| Переменная | Значение |
-| --- | --- |
-| `SITE_URL` | Optional fallback outside Netlify: production origin without a path. Netlify automatically supplies its primary domain through `URL`. |
-| `ALLOW_INDEXING` | `false` по умолчанию; `true` только для настоящего production |
-| `NEXT_PUBLIC_FORMS_ENABLED` | `false` по умолчанию; `true` только после настройки Netlify Forms |
+The React form and `public/__forms.html` must use identical field names. Submission is a URL-encoded AJAX POST to `/__forms.html`, including `form-name` and a honeypot. Success is shown only after an OK response; errors preserve the form values and repeated clicks are blocked while sending. Local or disabled forms honestly report that nothing was sent. An enquiry is not an order confirmation or payment.
 
-Пример домена выше предназначен только для документации и не используется кодом. При отсутствии URL canonical не генерируется. Для включённой индексации требуется URL. Netlify preview/deploy-preview/branch-deploy блокируются от индексации дополнительно через `CONTEXT`; вне Netlify задайте `ALLOW_INDEXING=false` на staging самостоятельно. robots/noindex не заменяют ограничение доступа к конфиденциальному сайту. Sitemap демо пустой; production sitemap содержит публичные страницы, композиции и опубликованные статьи.
+The sample keeps indexing disabled with `ALLOW_INDEXING=false`. Enable it only after replacing demonstration content and reviewing production metadata. Previews remain excluded from indexing. Relative navigation needs no origin; canonical, social and sitemap URLs use the primary production origin.
 
-## GitHub и Netlify
+Official guidance: [Next.js deployment](https://docs.netlify.com/build/frameworks/framework-setup-guides/nextjs/overview/), [Forms setup](https://docs.netlify.com/manage/forms/setup/), [Forms troubleshooting](https://docs.netlify.com/manage/forms/troubleshooting-tips/), [built-in environment variables](https://docs.netlify.com/build/configure-builds/environment-variables/).
 
-1. Создайте пустой приватный GitHub-репозиторий `flowers` без начального README.
-2. В папке проекта выполните:
+## Connect to Inspirovate Admin
 
-```bash
-git init -b main
-git add .
-git commit -m "Create Petal and Stem florist website"
-git remote add origin https://github.com/YOUR_ACCOUNT/flowers.git
-git push -u origin main
-```
+Set the live website URL in GitHub's About section. In the admin, choose All projects → Add project and paste the repository URL. Grant the server token Contents read/write for this repository. Import can use a paid AI request to suggest business rules; it does not deploy the site or start automation.
 
-Замените `YOUR_ACCOUNT`. Файлы `.env.local`, node_modules и `.next` исключены. Lockfile нужно коммитить.
+Review Project settings, the live URL, Blog rules & settings, enabled Knowledge and Blog library. Confirm website setup, test a draft and verified publication, then enable the Calendar if required. The shared **Documentation** section in the admin sidebar contains a complete website-building prompt and developer contract. Updating blog counts does not retroactively rewrite old articles.
 
-3. В Netlify импортируйте репозиторий через GitHub. Используйте автоматически определённую интеграцию Next.js. Команда сборки `npm run build`; обычный build directory `.next`. Не включайте static export: контактная страница использует серверные query-параметры.
-4. Выберите Node 22 или 24, задайте переменные окружения. Для демо оставьте `ALLOW_INDEXING=false`.
-5. Разрешите Forms → Enable form detection и выполните новый деплой.
-6. Убедитесь, что Netlify обнаружил `flower-enquiry` со всеми полями.
-7. Настройте email-уведомление получателю в Netlify Forms. Поле `email` содержит адрес посетителя.
-8. Установите `NEXT_PUBLIC_FORMS_ENABLED=true` для нужного окружения и повторно соберите проект. Эта переменная встраивается в браузерный код при сборке.
-9. Отправьте тестовую заявку на опубликованном сайте. Проверьте запись в Forms и фактическое получение письма. Проверьте также размер, дату и сообщение.
-10. Подключите домен. Включайте индексацию после замены демонстрационного контента и проверки production URL.
+## Handover and verification
 
-Форма отправляет URL-encoded POST на `/__forms.html`, включает `form-name` и honeypot. Имена полей React-компонента и статического HTML должны совпадать. Состояние успеха показывается только после успешного HTTP-ответа. При сетевой ошибке данные остаются в форме; во время отправки повторный запрос блокируется.
+Check mobile navigation, filters, enquiry prefill, images, missing-page behavior, canonical, sitemap and form delivery on the live deployment. Source checks alone cannot prove Netlify email delivery. See [VALIDATION.md](VALIDATION.md) for the existing validation record; it is not a claim that every later change was retested.
 
-В локальном режиме отправка намеренно не выполняется. При отключённой настройке показывается честное сообщение «не отправлено», а не тестовый успех. Реальную обработку и email можно проверить только в настроенном Netlify-проекте. Страница ответа не означает подтверждённый или оплаченный заказ.
-
-`netlify.toml` не требуется: дополнительных build overrides нет. Адаптер Netlify подбирается платформой. Проверьте актуальные настройки интеграции при первом деплое.
-
-Официальные справочники, использованные при подготовке:
-- https://nextjs.org/docs/app/getting-started/installation
-- https://docs.netlify.com/manage/forms/setup/
-- https://docs.netlify.com/manage/forms/troubleshooting-tips/
-- https://docs.netlify.com/build/frameworks/framework-setup-guides/nextjs/overview/
-
-## Перед запуском и передача
-
-Проверьте все страницы, мобильное меню, фильтры, выбор размера, предзаполнение заявки, доступность изображений, 404, sitemap и canonical. Уточните с реальным бизнесом условия обработки заявок и необходимые тексты о персональных данных.
-
-У каждого клиента отдельный репозиторий и Netlify-проект. Сборка не требует базы, приватных пакетов, ключей AI или админки агентства. При передаче передайте исходники, Markdown, все изображения и аккаунтные настройки; перенастройте email и домен, проверьте новую сборку и заявку. Будущий webhook агентства отключается отдельно. При смене Netlify потребуется заменить обработчик формы.
-
-## Проверки этой поставки
-
-Текущий отчёт о выполненных проверках: `VALIDATION.md`.
+Transfer source, Markdown, assets, repository and hosting access as appropriate. Update the recipient and domain, rebuild and test a new enquiry. Each client website is independent; moving away from Netlify requires replacing its form handler. The agency scheduler can be disabled separately from the site.
